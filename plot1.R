@@ -1,0 +1,13 @@
+url<-"https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip"
+download.file(url,destfile="power.zip")
+unzip("power.zip")
+data<-read.table("household_power_consumption.txt",sep=";",colClasses=rep("character",9),header=TRUE,stringsAsFactors=FALSE)
+data$datetime<-strptime(paste(data$Date,data$Time),"%d/%m/%Y %H:%M:%S")
+suppressWarnings(data<-data.frame(data[,10],sapply(data[,3:9],as.numeric)))
+names(data)<-c("Date",names(data)[2:8])
+data.set<-subset(data,(data$Date>=as.POSIXlt("2007-02-01 00:00:00"))&(data$Date<as.POSIXlt("2007-02-03 00:00:00")))
+remove(data)
+png(file="plot1.png",bg="transparent",width=480,height=480,units="px")
+par(mar=c(4.1,4.1,2.1,2.1))
+hist(data.set$Global_active_power,main="Global Active Power",xlab="Global Active Power (kilowatts)",ylab="Frequency",col="red",bg="transparent")
+dev.off()
